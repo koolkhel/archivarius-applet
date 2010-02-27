@@ -34,7 +34,7 @@
         <configuration>
           <keystore>keystore.jks</keystore>
           <alias>mykey</alias>
-          <storepass>Diablomanru</storepass>
+          <storepass>123123</storepass>
           <signedjar>${project.build.directory}/../../archivarius/src/main/webapp/${project.build.finalName}.jar</signedjar>
           <verify>true</verify>
           <archive>

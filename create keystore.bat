@@ -1,1 +1,1 @@
-keytool -genkey -keyalg RSA -alias mykey -keystore keystore.jks -storepass Diablomanru -validity 3600
+keytool -genkey -keyalg RSA -alias mykey -keystore keystore.jks -storepass 123123 -validity 3600

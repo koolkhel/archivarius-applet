@@ -86,6 +86,8 @@ public class DiskApplet extends JApplet {
                 }
                 pw.flush();
                 pw.close();
+                JOptionPane.showMessageDialog(master, master.getParameter("uploadUrl"));
+                JOptionPane.showMessageDialog(master, master.getParameter("redirectUrl"));
                 InputStream is = ClientHttpRequest.post(new URL(master.getParameter("uploadUrl")), "files", temp);
                 is.close();
                 temp.deleteOnExit();
