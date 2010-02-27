@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?><project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>t5</groupId>
+  <artifactId>diskApplet</artifactId>
+  <version>0.0.3-SNAPSHOT</version>
+  <name>diskApplet</name>
+  <description>Disk search applet</description>
+  <parent>
+	<artifactId>archivarius-app</artifactId>
+	<groupId>t5</groupId>
+	<version>0.0.3-SNAPSHOT</version>
+  </parent>
+  
+  <build>
+  <plugins>
+  	<plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+          <optimize>true</optimize>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>sign</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <keystore>keystore.jks</keystore>
+          <alias>mykey</alias>
+          <storepass>Diablomanru</storepass>
+          <signedjar>${project.build.directory}/../../archivarius/src/main/webapp/${project.build.finalName}.jar</signedjar>
+          <verify>true</verify>
+          <archive>
+            <manifest>
+              <addClasspath>true</addClasspath>
+              <mainClass>t5.DiskApplet</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+      
+  </plugins>
+  </build>
+  <dependencies>
+  </dependencies>
+</project>
