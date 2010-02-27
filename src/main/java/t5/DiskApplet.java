@@ -10,10 +10,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
 import java.util.*;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 import java.net.URL;
 import javax.swing.*;
 
 public class DiskApplet extends JApplet {
+    private Logger logger = Logger.getLogger("DiskApplet");
+    
     private static final long serialVersionUID = 0x98f9d38650765af5L;
     JButton openButton;
     JProgressBar progressBar;
@@ -86,8 +90,8 @@ public class DiskApplet extends JApplet {
                 }
                 pw.flush();
                 pw.close();
-                JOptionPane.showMessageDialog(master, master.getParameter("uploadUrl"));
-                JOptionPane.showMessageDialog(master, master.getParameter("redirectUrl"));
+                logger.log(Level.SEVERE, master.getParameter("uploadUrl"));
+                logger.log(Level.SEVERE, master.getParameter("redirectUrl"));
                 InputStream is = ClientHttpRequest.post(new URL(master.getParameter("uploadUrl")), "files", temp);
                 is.close();
                 temp.deleteOnExit();
@@ -96,7 +100,8 @@ public class DiskApplet extends JApplet {
                 } catch (Exception e) {
                 }
             } catch (Exception e) {
-                JOptionPane.showMessageDialog(null, "Попытка деления на букву О");
+                JOptionPane.showMessageDialog(null, "Hello, error");
+                logger.log(Level.SEVERE, "we're dead");
                 e.printStackTrace();
             }
         }
@@ -109,44 +114,56 @@ public class DiskApplet extends JApplet {
             this.file = file;
         }
 
-        public List getFileListing(File aStartingDir)
-                throws FileNotFoundException {
+        // from: http://www.javapractices.com/topic/TopicAction.do?Id=68
+
+        public List<File> getFileListing(
+                File aStartingDir
+        ) throws FileNotFoundException {
             validateDirectory(aStartingDir);
-            List result = getFileListingNoSort(aStartingDir);
+            List<File> result = getFileListingNoSort(aStartingDir);
             Collections.sort(result);
             return result;
         }
 
-        private List getFileListingNoSort(File aStartingDir)
-                throws FileNotFoundException {
-            List result = new ArrayList();
-            File filesAndDirs[] = aStartingDir.listFiles();
-            List filesDirs = Arrays.asList(filesAndDirs);
-            Iterator i$ = filesDirs.iterator();
-            do {
-                if (!i$.hasNext())
-                    break;
-                File file = (File) i$.next();
-                result.add(file);
+        // PRIVATE //
+        private List<File> getFileListingNoSort(
+                File aStartingDir
+        ) throws FileNotFoundException {
+            List<File> result = new ArrayList<File>();
+            File[] filesAndDirs = aStartingDir.listFiles();
+            List<File> filesDirs = Arrays.asList(filesAndDirs);
+            for (File file : filesDirs) {
+                result.add(file); //always add, even if directory
                 if (!file.isFile()) {
-                    List deeperList = getFileListingNoSort(file);
+                    //must be a directory
+                    //recursive call!
+                    List<File> deeperList = getFileListingNoSort(file);
                     result.addAll(deeperList);
                 }
-            } while (true);
+            }
             return result;
         }
 
-        private void validateDirectory(File aDirectory)
-                throws FileNotFoundException {
-            if (aDirectory == null)
+        /**
+         * Directory is valid if it exists, does not represent a file, and can be read.
+         */
+        private void validateDirectory(
+                File aDirectory
+        ) throws FileNotFoundException {
+            if (aDirectory == null) {
                 throw new IllegalArgumentException("Directory should not be null.");
-            if (!aDirectory.exists())
-                throw new FileNotFoundException((new StringBuilder()).append("Directory does not exist: ").append(aDirectory).toString());
-            if (!aDirectory.isDirectory())
-                throw new IllegalArgumentException((new StringBuilder()).append("Is not a directory: ").append(aDirectory).toString());
-            if (!aDirectory.canRead())
-                throw new IllegalArgumentException((new StringBuilder()).append("Directory cannot be read: ").append(aDirectory).toString());
+            }
+            if (!aDirectory.exists()) {
+                throw new FileNotFoundException("Directory does not exist: " + aDirectory);
+            }
+            if (!aDirectory.isDirectory()) {
+                throw new IllegalArgumentException("Is not a directory: " + aDirectory);
+            }
+            if (!aDirectory.canRead()) {
+                throw new IllegalArgumentException("Directory cannot be read: " + aDirectory);
+            }
         }
+
 
         public DiskApplet getMaster() {
             return master;
